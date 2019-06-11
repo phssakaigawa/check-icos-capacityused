@@ -6,6 +6,7 @@ APIKEY=$2
 TOKEN=$(curl -s -k -X POST --header "Content-Type: application/x-www-form-urlencoded" --header "Accept: application/json" --data-urlencode "grant_type=urn:ibm:params:oauth:grant-type:apikey" --data-urlencode "apikey=${APIKEY}" "https://iam.cloud.ibm.com/identity/token" | jq -r ".access_token")
 
 BYTES_USED=$(curl -s -k https://config.cloud-object-storage.cloud.ibm.com/v1/b/${BUCKET} -H "authorization: bearer $TOKEN"| jq ".bytes_used")
+OBJECT_COUNT=$(curl -s -k https://config.cloud-object-storage.cloud.ibm.com/v1/b/${BUCKET} -H "authorization: bearer $TOKEN"| jq ".object_count")
 
 function bytesToHR()
 {
@@ -26,4 +27,4 @@ function bytesToHR()
 
 READABLE=$(bytesToHR ${BYTES_USED})
 
-echo "${BUCKET}: ${READABLE}"
+echo "${BUCKET}: ${READABLE} / ${OBJECT_COUNT} objects."
